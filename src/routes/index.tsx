@@ -37,6 +37,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { AutoReply } from "@/plugins/autoReply";
 
 type Tab = "home" | "rules" | "settings" | "logs";
 type AppTarget = "whatsapp" | "instagram";
@@ -149,6 +150,23 @@ function StudyAutomation() {
   }, [state, hydrated]);
 
   useEffect(() => {
+    if (!hydrated) return;
+    AutoReply.setServiceEnabled({ enabled: state.active }).catch(() => undefined);
+    AutoReply.syncConfig({ config: {
+      active: state.active,
+      targets: state.targets,
+      systemPrompt: state.systemPrompt,
+      fallback: state.fallback,
+      cooldown: state.cooldown,
+      delay: state.delay,
+      baseUrl: state.baseUrl,
+      apiKey: state.apiKey,
+      model: state.model,
+      rules: state.rules,
+    } }).catch(() => undefined);
+  }, [state, hydrated]);
+
+  useEffect(() => {
     if (!toast) return;
     const timer = window.setTimeout(() => setToast(null), 2800);
     return () => window.clearTimeout(timer);
@@ -200,9 +218,7 @@ function StudyAutomation() {
   }), [state.logs, logFilter, search]);
 
   const openNotificationSettings = () => {
-    const bridge = (window as Window & { Capacitor?: { Plugins?: { AutoReply?: { openNotificationAccess: () => Promise<void> } } } }).Capacitor?.Plugins?.AutoReply;
-    if (bridge) bridge.openNotificationAccess();
-    else setToast("Notification access opens when running the Android app");
+    AutoReply.openNotificationAccess().catch(() => setToast("Notification access opens when running the Android app"));
   };
 
   return (
