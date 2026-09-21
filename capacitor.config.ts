@@ -3,7 +3,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
 const config: CapacitorConfig = {
   appId: "com.studyai.automation",
   appName: "Study AI automation",
-  webDir: ".output/public",
+  webDir: "dist/client",
   bundledWebRuntime: false,
   plugins: {
     AutoReply: {

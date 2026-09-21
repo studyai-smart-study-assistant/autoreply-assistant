@@ -1,6 +1,6 @@
 # Study AI automation Android build
 
-This folder is ready for a GitHub Actions Android build. The TanStack SPA shell and client assets are generated in `.output/public`, which Capacitor syncs into the native app.
+This folder is ready for a GitHub Actions Android build. The TanStack SPA shell and client assets are generated in `dist/client`, which Capacitor syncs into the native app.
 
 ```bash
 bun install
