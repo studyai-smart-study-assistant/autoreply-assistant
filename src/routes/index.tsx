@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import {
   Activity,
   ArrowDownToLine,
@@ -182,9 +182,8 @@ function StudyAutomation() {
     }
     setConnectionState("testing");
     try {
-      const response = await fetch(`${state.baseUrl.replace(/\/$/, "")}/models`, {
-        headers: state.apiKey ? { Authorization: `Bearer ${state.apiKey}` } : undefined,
-      });
+      const headers: HeadersInit = state.apiKey ? { Authorization: `Bearer ${state.apiKey}` } : {};
+      const response = await fetch(`${state.baseUrl.replace(/\/$/, "")}/models`, { headers });
       if (!response.ok) throw new Error(`Connection returned ${response.status}`);
       setConnectionState("success");
       setToast("Provider connection verified");
@@ -315,7 +314,7 @@ function ActivityRow({ log }: { log: LogEntry }) {
   return <div className="activity-row"><div className={`activity-icon activity-${log.app}`}><Icon size={16} /></div><div className="row-copy"><div className="activity-title"><p>{log.sender}</p><span>{log.time.split(" · ")[1]}</span></div><span className="activity-message">{log.message}</span></div><StatusBadge status={log.status} /></div>;
 }
 
-function RulesView({ state, setState, setToast }: { state: AppState; setState: React.Dispatch<React.SetStateAction<AppState>>; setToast: (message: string) => void }) {
+function RulesView({ state, setState, setToast }: { state: AppState; setState: Dispatch<SetStateAction<AppState>>; setToast: (message: string) => void }) {
   const [newTrigger, setNewTrigger] = useState("");
   const [newResponse, setNewResponse] = useState("");
   const addRule = () => {
