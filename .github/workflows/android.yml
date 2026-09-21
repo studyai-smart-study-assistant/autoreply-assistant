@@ -35,7 +35,18 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run build
       - name: Verify mobile web assets
-        run: test -f dist/client/index.html
+        run: |
+          if [ ! -f dist/client/index.html ]; then
+            shell_path="$(find dist/client -type f -name index.html -print -quit 2>/dev/null || true)"
+            if [ -n "$shell_path" ]; then
+              cp "$shell_path" dist/client/index.html
+            fi
+          fi
+          if [ ! -f dist/client/index.html ]; then
+            echo "Android web shell was not generated at dist/client/index.html"
+            find dist -maxdepth 4 -type f -print | sort || true
+            exit 1
+          fi
       - run: npx cap sync android
       - run: gradle --no-daemon --stacktrace assembleDebug -p android
 
