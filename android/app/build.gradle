@@ -8,8 +8,6 @@ android { namespace 'com.studyai.automation'; compileSdk 36
     }
 }
 
-repositories { google(); mavenCentral() }
-
 dependencies {
     implementation project(':capacitor-android')
     implementation 'androidx.core:core:1.15.0'
