@@ -6,7 +6,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 
@@ -66,11 +65,12 @@ public class NotificationListenerService extends android.service.notification.No
     }
 
     private ReplyAction findReplyAction(Notification notification) {
-        NotificationCompat.Action[] actions = NotificationCompat.getActionsFromNotification(notification);
-        if (actions == null) return null;
-        for (NotificationCompat.Action action : actions) {
+        int count = NotificationCompat.getActionCount(notification);
+        for (int i = 0; i < count; i++) {
+            NotificationCompat.Action action = NotificationCompat.getAction(notification, i);
+            if (action == null || action.actionIntent == null) continue;
             RemoteInput[] inputs = action.getRemoteInputs();
-            if (action.actionIntent != null && inputs != null && inputs.length > 0) return new ReplyAction(action.actionIntent, inputs[0]);
+            if (inputs != null && inputs.length > 0) return new ReplyAction(action.actionIntent, inputs[0]);
         }
         return null;
     }
