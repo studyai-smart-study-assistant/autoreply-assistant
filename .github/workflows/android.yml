@@ -33,21 +33,11 @@ jobs:
           gradle-version: '8.13'
 
       - run: bun install --frozen-lockfile
-      - run: bun run build
-      - name: Verify mobile web assets
+      - name: Verify packaged Android web assets
         run: |
-          if [ ! -f dist/client/index.html ]; then
-            shell_path="$(find dist/client -type f -name index.html -print -quit 2>/dev/null || true)"
-            if [ -n "$shell_path" ]; then
-              cp "$shell_path" dist/client/index.html
-            fi
-          fi
-          if [ ! -f dist/client/index.html ]; then
-            echo "Android web shell was not generated at dist/client/index.html"
-            find dist -maxdepth 4 -type f -print | sort || true
-            exit 1
-          fi
-      - run: npx cap sync android
+          test -f android/app/src/main/assets/public/index.html
+          test -n "$(find android/app/src/main/assets/public/assets -type f -name '*.js' -print -quit)"
+          test -n "$(find android/app/src/main/assets/public/assets -type f -name '*.css' -print -quit)"
       - run: gradle --no-daemon --stacktrace assembleDebug -p android
 
       - uses: actions/upload-artifact@v4
